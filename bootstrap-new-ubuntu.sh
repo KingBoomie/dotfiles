@@ -124,7 +124,7 @@ if ! command -v duckdb >/dev/null; then
   curl -fsSL https://install.duckdb.org | bash
 fi
 if ! command -v codex >/dev/null; then
-  curl -fsSL https://chatgpt.com/codex/install.sh | sh
+  curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
 fi
 
 # uv provides isolated global CLI tools; no pipx setup is needed.
@@ -145,14 +145,9 @@ restore_file() {
 }
 
 restore_file .zshrc .zshrc 644
+restore_file zsh/zle.zsh .config/zsh/zle.zsh 644
 restore_file .p10k.zsh .p10k.zsh 644
-restore_file .gitconfig .gitconfig 644
 restore_file .tool-versions .tool-versions 644
-for completion in "$DOTFILES_DIR"/.zfunc/* "$DOTFILES_DIR"/.zsh/completions/*; do
-  [[ -f "$completion" ]] || continue
-  relative="${completion#"$DOTFILES_DIR"/}"
-  restore_file "$relative" "$relative" 644
-done
 restore_file niri/config.kdl .config/niri/config.kdl 644
 restore_file niri/scale-connected-outputs.sh .config/niri/scale-connected-outputs.sh 755
 restore_file niri/noctalia.kdl .config/niri/noctalia.kdl 644
@@ -183,16 +178,6 @@ fc-cache -f "$HOME/.local/share/fonts/SFMono"
 mkdir -p "$HOME/.local/bin"
 [[ -e "$HOME/.local/bin/fd" ]] || ln -s /usr/bin/fdfind "$HOME/.local/bin/fd"
 [[ -e "$HOME/.local/bin/bat" ]] || ln -s /usr/bin/batcat "$HOME/.local/bin/bat"
-for binary in CloudCompare ccViewer; do
-  case "$binary" in
-    CloudCompare) source_binary="$HOME/Downloads/CloudCompare/build-full-system/qCC/CloudCompare" ;;
-    ccViewer) source_binary="$HOME/Downloads/CloudCompare/build-full-system/ccViewer/ccViewer" ;;
-  esac
-  if [[ -x "$source_binary" && ! -e "$HOME/.local/bin/$binary" ]]; then
-    ln -s "$source_binary" "$HOME/.local/bin/$binary"
-  fi
-done
-
 sudo chsh -s "$(command -v zsh)" "$USER"
 niri validate --config "$HOME/.config/niri/config.kdl"
 noctalia config validate "$HOME/.config/noctalia/config.toml"

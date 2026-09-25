@@ -1,0 +1,7 @@
+[user]
+	email = kristjan@gridscan.eu
+	name = KingBoomie
+[init]
+	defaultBranch = main
+[core]
+	autocrlf = input
